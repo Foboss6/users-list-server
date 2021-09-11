@@ -187,17 +187,17 @@ app.post('/login/register', (req, res) => {
 // *************************************************
 
 app.get('/', (req, res) => {
-  let package = [];
+  let packageToSend = [];
   db('users').select('*')
-  .then(data => package.push(data))
+  .then(data => packageToSend.push(data))
   .catch(err => res.status(400).json('Error in getting data from users database'));
 
   db('admins').select('*')
-  .then(data => package.push(data))
+  .then(data => packageToSend.push(data))
   .catch(err => res.status(400).json('Error in getting data from admins database'));
 
-  res.status(200).json(package);
-})
+  res.status(200).json(packageToSend);
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running`);
