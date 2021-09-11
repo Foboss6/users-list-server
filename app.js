@@ -161,11 +161,12 @@ app.post('/login/register', (req, res) => {
         email: email.toLowerCase(),
       })
       .catch((err) => {
-        if(err.detail && err.detail.includes('exist')) {
-          return res.status(400).json('Admin with this email already exists');
-        } else {
-          return res.status(400).json('Admins database error, cannot add data');
-        }
+        return res.status(400).json(err);
+        // if(err.detail && err.detail.includes('exist')) {
+        //   return res.status(400).json('Admin with this email already exists');
+        // } else {
+        //   return res.status(400).json('Admins database error, cannot add data');
+        // }
       });
     })
     .catch(err => res.status(400).json("server error"));
