@@ -128,6 +128,19 @@ app.post('/login/register', (req, res) => {
         hash: result.hash,
         email: email.toLowerCase(),
       })
+      .then(() => {
+        // store new user's data into database
+        db('users')
+        .returning('*')
+        .insert({
+          firstname: firstName,
+          lastname: lastName,
+          position: position,
+          email: email.toLowerCase()
+        })
+        .then(data => res.status(200).json(data[0]))
+        .catch(err => res.status(400).json('Users database error, cannot add data'));
+      })
       .catch((err) => {
         if(err.detail && err.detail.includes('exist')) {
           return res.status(400).json('Admin with this email already exists');
@@ -137,18 +150,6 @@ app.post('/login/register', (req, res) => {
       })  
     })
     .catch(err => res.status(400).json("server error"));
-
-    // store new user's data into database
-    db('users')
-    .returning('*')
-    .insert({
-      firstname: firstName,
-      lastname: lastName,
-      position: position,
-      email: email.toLowerCase()
-    })
-    .then(data => res.status(200).json(data[0]))
-    .catch(err => res.status(400).json('Users database error, cannot add data'));
   } else {
 
     // if we receive only email an password, then add it into admins databasse
