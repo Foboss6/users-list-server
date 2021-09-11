@@ -6,7 +6,7 @@ const PORT = process.env.PORT;
 
 // ****** DATABASE section *************************
 // Its for fix poblem with using free Heroku database 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
 const db = knex({
   client: 'pg',
