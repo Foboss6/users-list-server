@@ -104,17 +104,73 @@ app.post('/login/register', (req, res) => {
   const {email, password, firstName, lastName, position} = req.body;
   
   // validation of received data
-  if(!(email && password)) {
-    return res.status(400).json("invalid admins data");
+  if(!(email && password)) return res.status(400).json("invalid admins data");
+  
+  if(!(email && emailValidation(email))) return res.status(400).json("invalid email");
+  if(!(password.length < 6)) return res.status(400).json("invalid password");
+  
+  // verify user's data, if at least one exists we'll work with it
+  if(firstName || lastName || position) {
+    if(firstName.length < 2) return res.status(400).json("invalid first name");
+    if(lastName.length < 2) return res.status(400).json("invalid last name");
+    if(position.length < 2) return res.status(400).json("invalid position");
+  
+    // all data is good, store it into database
+    // generating hash for new admins's password
+    genSalt(password)
+    .then((result) => {
+      return genHash(result.salt, result.password);
+    })
+    .then((result) => {
+      // store new admin's password into database
+      db('admins').insert({
+        hash: result.hash,
+        email: email.toLowerCase(),
+      }).catch(err => res.status(400).json('Admins database error, cannot add data'));
+    })
+    .catch(err => res.status(400).json("server error"));
+    // store new user's data into database
+    db('users')
+    .returning('*')
+    .insert({
+      firstname: firstName,
+      lastname: lastName,
+      position: position,
+      email: email.toLowerCase()
+    })
+    .then(data => res.status(200).json(data[0]))
+    .catch((err) => {
+      if(err.details && err.detail.includes('exist')) {
+        return res.status(400).json('Admin with this email already exists');
+      } else {
+        return res.status(400).json('Admins database error, cannot add data');
+      }
+    })  
+  } else {
+    // if we receive only email an password, then add it into admins databasse
+    // without adding user into users database 
+    // generating hash for new admins's password
+    genSalt(password)
+    .then((result) => {
+      return genHash(result.salt, result.password);
+    })
+    .then((result) => {
+      // store new admin's password into database
+      db('admins').insert({
+        hash: result.hash,
+        email: email.toLowerCase(),
+      }).catch((err) => {
+        if(err.details && err.detail.includes('exist')) {
+          return res.status(400).json('Admin with this email already exists');
+        } else {
+          return res.status(400).json('Admins database error, cannot add data');
+        }
+      });
+    })
+    .catch(err => res.status(400).json("server error"));
   }
 
-  if(!(email && emailValidation(email))) {
-    return res.status(400).json("invalid email");
-  }
 
-  if(!(password.length < 6)) {
-    return res.status(400).json("invalid password");
-  }
 
   // generating hash for new admins's password
   genSalt(password)
