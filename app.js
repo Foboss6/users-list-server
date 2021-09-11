@@ -160,10 +160,13 @@ app.post('/login/register', (req, res) => {
     })
     .then((result) => {
       // store new admin's password into database
-      db('admins').insert({
+      db('admins')
+      .returning('*')
+      .insert({
         hash: result.hash,
         email: email.toLowerCase(),
       })
+      .then(data => res.status(200).json(data[0]))
       .catch((err) => {
         if(err.detail && err.detail.includes('exist')) {
           return res.status(400).json('Admin with this email already exists');
