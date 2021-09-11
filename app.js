@@ -165,7 +165,6 @@ app.post('/login/register', (req, res) => {
         email: email.toLowerCase(),
       })
       .catch((err) => {
-        // return res.status(400).json(err);
         if(err.detail && err.detail.includes('exist')) {
           return res.status(400).json('Admin with this email already exists');
         } else {
@@ -175,42 +174,6 @@ app.post('/login/register', (req, res) => {
     })
     .catch(err => res.status(400).json("server error"));
   }
-
-
-
-  // generating hash for new admins's password
-  genSalt(password)
-  .then((result) => {
-    return genHash(result.salt, result.password);
-  })
-  .then((result) => {
-    // store new admin's password into database
-    db('admins').insert({
-      hash: result.hash,
-      email: email.toLowerCase(),
-    }).catch(err => res.status(400).json('Admins database error, cannot add data'));
-  })
-  .then(() => {
-    // verify user's data, if at least one exists we'll work with it
-    if(firstName || lastName || position) {
-      if(firstName.length < 2) return res.status(400).json("invalid first name");
-      if(lastName.length < 2) return res.status(400).json("invalid last name");
-      if(position.length < 2) return res.status(400).json("invalid position");
-
-      // data is good, store it into database
-      db('users')
-      .returning('*')
-      .insert({
-        firstname: firstName,
-        lastname: lastName,
-        position: position,
-        email: email.toLowerCase()
-      })
-      .then(data => res.status(200).json(data[0]))
-      .catch(err => res.status(400).json("Users database error, cannot add data"));
-    }
-  })
-  .catch(err => res.status(400).json("server error"));
 });
 // *************************************************
 
