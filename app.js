@@ -89,6 +89,7 @@ app.post('/login', (req, res) => {
       } else res.status(404).json('There are no such user in database');
     } else res.status(400).json('Error in getting data from database');
   })
+  .catch(err => res.status(404).json(err));
 })
 // *************************************************
 
