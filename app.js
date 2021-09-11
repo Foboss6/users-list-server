@@ -23,7 +23,7 @@ app.use(express.json());
 // *************************************************
 
 app.get('/', (req, res) => {
-  db.select('*').from('users')
+  db('users').join('admins', 'users.email', 'admins.email').select('*')
   .then(data => res.status(200).json(data))
   .catch(err => res.status(400).json('Error in getting data from database'));
 })
