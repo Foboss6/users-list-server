@@ -25,7 +25,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   db.select('*').from('users')
   .then(data => res.status(200).json(data))
-  .catch(err => res.status(400).json('Error in getting data from database'+));
+  .catch(err => res.status(400).json('Error in getting data from database'));
 })
 
 app.listen(PORT, () => {
