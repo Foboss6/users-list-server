@@ -167,7 +167,7 @@ app.post('/login/register', (req, res) => {
         hash: result.hash,
         email: email.toLowerCase(),
       })
-      .then(data => res.status(200).json(data[0]))
+      .then(data => res.status(200).json({id: data[0].id, email: data[0].email}))
       .catch((err) => {
         if(err.detail && err.detail.includes('exist')) {
           return res.status(400).json('Admin with this email already exists');
@@ -187,9 +187,16 @@ app.post('/login/register', (req, res) => {
 // *************************************************
 
 app.get('/', (req, res) => {
-  db('users').join('admins', 'users.email', 'admins.email').select('*')
-  .then(data => res.status(200).json(data))
-  .catch(err => res.status(400).json('Error in getting data from database'));
+  let package = [];
+  db('users').select('*')
+  .then(data => package.push(data))
+  .catch(err => res.status(400).json('Error in getting data from users database'));
+
+  db('admins').select('*')
+  .then(data => package.push(data))
+  .catch(err => res.status(400).json('Error in getting data from admins database'));
+
+  res.status(200).json(package);
 })
 
 app.listen(PORT, () => {
