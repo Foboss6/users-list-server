@@ -1,6 +1,5 @@
 import express from 'express';
 import knex from 'knex';
-// import { HOST_NAME, PORT } from './variables.js';
 
 const PORT = process.env.PORT;
 
