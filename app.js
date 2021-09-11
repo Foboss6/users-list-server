@@ -190,13 +190,17 @@ app.get('/', (req, res) => {
   let packageToSend = [];
   db('users').select('*')
   .then(data => packageToSend.push(data))
+  .then(() => {
+    
+    db('admins').select('*')
+    .then(data => packageToSend.push(data))
+    .then(() => {
+      
+      res.status(200).json(packageToSend);
+    })
+    .catch(err => res.status(400).json('Error in getting data from admins database'));
+  })
   .catch(err => res.status(400).json('Error in getting data from users database'));
-
-  db('admins').select('*')
-  .then(data => packageToSend.push(data))
-  .catch(err => res.status(400).json('Error in getting data from admins database'));
-
-  res.status(200).json(packageToSend);
 });
 
 app.listen(PORT, () => {
