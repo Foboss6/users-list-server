@@ -1,6 +1,8 @@
 import express from 'express';
 import knex from 'knex';
-import { HOST_NAME, PORT } from './variables.js';
+// import { HOST_NAME, PORT } from './variables.js';
+
+const PORT = process.env.PORT;
 
 // ****** DATABASE section *************************
 // Its for fix poblem with using free Heroku database 
@@ -22,9 +24,11 @@ app.use(express.json());
 // *************************************************
 
 app.get('/', (req, res) => {
-  res.status(200).json('All working');
+  db.select('*').from('users')
+  .then(data => res.status(200).json(data))
+  .catch(err => res.status(400).json('Error in getting data from database'+));
 })
 
-app.listen(PORT, HOST_NAME, () => {
+app.listen(PORT, () => {
   console.log(`Server running at http://${HOST_NAME}:${PORT}/`);
 });
