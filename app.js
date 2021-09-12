@@ -263,8 +263,38 @@ app.delete('/users/delete', (req, res) =>{
 });
 // *************************************************
 
-// ******* /users/ *********************************
-
+// ******* /users/:id *********************************
+app.put('/users/:id', (req, res) => {
+  const {firstName, lastName, position} = req.body;
+  
+  // validation of received data
+  if(firstName && lastName && position) {
+    if(firstName.length < 2) return res.status(400).json("invalid first name");
+    if(lastName.length < 2) return res.status(400).json("invalid last name");
+    if(position.length < 2) return res.status(400).json("invalid position");
+    // all data is good, check the existence of such user
+    if(req.params.id) {
+      db('users')
+      .where({id: req.params.id})
+      .select('*')
+      .then((user) => {
+        if(user[0].id) {
+          // if the user exists, update his data in the database
+          db('users')
+          .where({id: req.params.id})
+          .update({
+            firstname: firstName,
+            lastname: lastName,
+            position: position
+          })
+          .then(() => res.status(200).json('success, user\'s data updated'))
+          .catch(err => res.status(400).json('Users database error: cannot undate data'))
+        }
+      })
+      .catch(err => res.status(400).json('Such user does not exist'));
+    } else res.status(400).json('invalid :id parameter');
+  } else res.status(400).json('invalid user\'s data');
+});
 // *************************************************
 
 app.get('/', (req, res) => {
