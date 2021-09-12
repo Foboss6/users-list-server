@@ -197,18 +197,18 @@ if(firstName && lastName && position) {
     lastname: lastName,
     position: position
   })
-  .then((data) => { return res.status(400).json(data)})
-  .catch((err) => { return res.status(400).json(err[0])});
-
-  // db('users')
-  //     .returning('*')
-  //     .insert({
-  //       firstname: firstName,
-  //       lastname: lastName,
-  //       position: position
-  //     })
-  //     .then(data => res.status(200).json(data[0]))
-  //     .catch(err => res.status(400).json('Users database error, cannot add data'));
+  .then((data) => res.status(400).json('Such users already exists'))
+  .catch((err) => { 
+    db('users')
+    .returning('*')
+    .insert({
+      firstname: firstName,
+      lastname: lastName,
+      position: position
+    })
+    .then(data => res.status(200).json(data[0]))
+    .catch(err => res.status(400).json('Users database error, cannot add data'));
+  });
 
 } else res.status(400).json("invalid user's data");
 });
