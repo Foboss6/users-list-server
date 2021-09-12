@@ -1,5 +1,6 @@
 import express from 'express';
 import knex from 'knex';
+import cors from 'cors';
 import bcrypt from 'bcryptjs';
 
 const PORT = process.env.PORT;
@@ -56,6 +57,7 @@ const app = express();
 
 // ****** MIDDLEWARE *******************************
 app.use(express.json());
+app.use(cors());
 // *************************************************
 
 // ******* /users **********************************
