@@ -265,7 +265,7 @@ app.delete('/users/delete', (req, res) =>{
 
 // ******* /users/:id *********************************
 app.put('/users/:id', (req, res) => {
-  res.json(req.params);
+  if(req.params.id === 12) res.json('congratulations! all working!');
 });
 // *************************************************
 
