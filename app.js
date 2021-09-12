@@ -221,18 +221,13 @@ if(firstName && lastName && position) {
 
 // ******* /users/delete ***************************
 app.delete('/users/delete', (req, res) =>{
-  const {firstName, lastName, position} = req.body;
+  const {id} = req.body;
   // validation of received data
-  if(firstName && lastName && position) {
-    if(firstName.length < 2) return res.status(400).json("invalid first name");
-    if(lastName.length < 2) return res.status(400).json("invalid last name");
-    if(position.length < 2) return res.status(400).json("invalid position");
-  // all data is good, check the existence of such user
+  if(id) {
+  // if id is good, check the existence of such user
     db('users').select('*')
     .where({
-      firstname: firstName,
-      lastname: lastName,
-      position: position
+      id: id
     })
     .then((user) => {
       if(user[0].id) {
