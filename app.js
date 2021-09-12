@@ -185,12 +185,12 @@ app.post('/login/register', (req, res) => {
 // ******* /users/create ***************************
 app.post('/users/create', (req, res) => {
 const {firstName, lastName, position} = req.body;
-
+// validation of received data
 if(firstName && lastName && position) {
   if(firstName.length < 2) return res.status(400).json("invalid first name");
   if(lastName.length < 2) return res.status(400).json("invalid last name");
   if(position.length < 2) return res.status(400).json("invalid position");
-
+// all data is good, check the existence of such user
   db('users').select('*')
   .where({
     firstname: firstName,
@@ -201,6 +201,7 @@ if(firstName && lastName && position) {
     if(data[0].id) return res.status(400).json('Such users already exists');
   })
   .catch((err) => { 
+    // if such user doesn't exist, add him to the base
     db('users')
     .returning('*')
     .insert({
