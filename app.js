@@ -182,6 +182,29 @@ app.post('/login/register', (req, res) => {
 // *************************************************
 
 
+// ******* /users/create ***************************
+app.post('/users/create', (req, res) => {
+const {firstName, lastName, position} = req.body;
+
+if(firstName && lastName && position) {
+  if(firstName.length < 2) return res.status(400).json("invalid first name");
+  if(lastName.length < 2) return res.status(400).json("invalid last name");
+  if(position.length < 2) return res.status(400).json("invalid position");
+
+  db('users')
+  .returning('*')
+  .insert({
+    firstname: firstName,
+    lastname: lastName,
+    position: position
+  })
+  .then(data => res.status(200).json(data[0]))
+  .catch(err => res.status(400).json('Users database error, cannot add data'));
+
+} else res.status(400).json("invalid user's data");
+});
+// *************************************************
+
 // ******* /users **********************************
 
 // *************************************************
