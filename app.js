@@ -198,7 +198,7 @@ if(firstName && lastName && position) {
     position: position
   })
   .then((data) => {
-    if(data[0].id) return res.status(400).json('Such users already exists');
+    if(data[0].id) return res.status(400).json('Such user already exists');
   })
   .catch((err) => { 
     // if such user doesn't exist, add him to the base
@@ -217,7 +217,53 @@ if(firstName && lastName && position) {
 });
 // *************************************************
 
-// ******* /users **********************************
+// ******* /users/delete ***************************
+app.delete('/users/delete', (req, res) =>{
+  const {firstName, lastName, position} = req.body;
+  // validation of received data
+  if(firstName && lastName && position) {
+    if(firstName.length < 2) return res.status(400).json("invalid first name");
+    if(lastName.length < 2) return res.status(400).json("invalid last name");
+    if(position.length < 2) return res.status(400).json("invalid position");
+  // all data is good, check the existence of such user
+    db('users').select('*')
+    .where({
+      firstname: firstName,
+      lastname: lastName,
+      position: position
+    })
+    .then((user) => {
+      if(user[0].id) {
+        // if the user exists, check if he is an admin too
+        if(user[0].email) {
+          // if such admin exists, delete him from the dabase
+          db('admins').select('*')
+          .where({email: user[0].email})
+          .then((admin) => {
+            if(admin[0].id) {
+              db('admins')
+              .where({id: admin[0].id})
+              .del()
+              .catch(err => res.status(400).json('1: Admins database error, cannot delete data'))
+            }
+          })
+          .catch(console.log);
+        }
+        // delete the user from the database
+        db('users')
+        .where({id: user[0].id})
+        .del()
+        .then(() => res.status(200).json('success'))
+        .catch(err => res.status(400).json('Such user does not exists'))
+      }
+    })
+    .catch((err) =>  res.status(400).json('Users database error, cannot read data'));
+    // if requsted data are wrong
+  } else res.status(400).json("invalid user's data");
+});
+// *************************************************
+
+// ******* /users/ *********************************
 
 // *************************************************
 
