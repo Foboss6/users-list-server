@@ -254,10 +254,10 @@ app.delete('/users/delete', (req, res) =>{
         .where({id: user[0].id})
         .del()
         .then(() => res.status(200).json('success'))
-        .catch(err => res.status(400).json('Such user does not exists'))
+        .catch(err => res.status(400).json('Users database error, cannot delete data'))
       }
     })
-    .catch((err) =>  res.status(400).json('Users database error, cannot read data'));
+    .catch((err) =>  res.status(400).json('Such user does not exists'));
     // if requsted data are wrong
   } else res.status(400).json("invalid user's data");
 });
