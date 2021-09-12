@@ -197,7 +197,9 @@ if(firstName && lastName && position) {
     lastname: lastName,
     position: position
   })
-  .then((data) => res.status(400).json('Such users already exists'))
+  .then((data) => {
+    if(data[0].id) return res.status(400).json('Such users already exists');
+  })
   .catch((err) => { 
     db('users')
     .returning('*')
