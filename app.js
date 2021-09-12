@@ -198,7 +198,7 @@ if(firstName && lastName && position) {
     position: position
   })
   .then((data) => { return res.status(400).json(data)})
-  .catch(err => res.status(400).json(err));
+  .catch((err) => { return res.status(400).json(err[0])});
 
   // db('users')
   //     .returning('*')
