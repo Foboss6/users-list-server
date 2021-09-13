@@ -103,7 +103,7 @@ const emailValidation = (email) => (
 );
 
 app.post('/login/register', (req, res) => {
-  const {email, password, firstName, lastName, position} = req.body;
+  const {email, password, firstname, lastname, position} = req.body;
   
   // validation of received data
   if(!(email && password)) return res.status(400).json("invalid admins data");
@@ -112,9 +112,9 @@ app.post('/login/register', (req, res) => {
   if(password.length < 6) return res.status(400).json("invalid password");
   
   // verify user's data, if at least one exists we'll work with it
-  if(firstName || lastName || position) {
-    if(firstName.length < 2) return res.status(400).json("invalid first name");
-    if(lastName.length < 2) return res.status(400).json("invalid last name");
+  if(firstname || lastname || position) {
+    if(firstname.length < 2) return res.status(400).json("invalid first name");
+    if(lastname.length < 2) return res.status(400).json("invalid last name");
     if(position.length < 2) return res.status(400).json("invalid position");
   
     // all data is good, store it into database
@@ -135,8 +135,8 @@ app.post('/login/register', (req, res) => {
         db('users')
         .returning('*')
         .insert({
-          firstname: firstName,
-          lastname: lastName,
+          firstname: firstname,
+          lastname: lastname,
           position: position,
           email: email.toLowerCase()
         })
@@ -186,17 +186,17 @@ app.post('/login/register', (req, res) => {
 
 // ******* /users/create ***************************
 app.post('/users/create', (req, res) => {
-const {firstName, lastName, position} = req.body;
+const {firstname, lastname, position} = req.body;
 // validation of received data
-if(firstName && lastName && position) {
-  if(firstName.length < 2) return res.status(400).json("invalid first name");
-  if(lastName.length < 2) return res.status(400).json("invalid last name");
+if(firstname && lastname && position) {
+  if(firstname.length < 2) return res.status(400).json("invalid first name");
+  if(lastname.length < 2) return res.status(400).json("invalid last name");
   if(position.length < 2) return res.status(400).json("invalid position");
 // all data is good, check the existence of such user
   db('users').select('*')
   .where({
-    firstname: firstName,
-    lastname: lastName,
+    firstname: firstname,
+    lastname: lastname,
     position: position
   })
   .then((data) => {
@@ -207,8 +207,8 @@ if(firstName && lastName && position) {
     db('users')
     .returning('*')
     .insert({
-      firstname: firstName,
-      lastname: lastName,
+      firstname: firstname,
+      lastname: lastname,
       position: position
     })
     .then(data => res.status(200).json(data[0]))
@@ -262,12 +262,12 @@ app.delete('/users/delete', (req, res) =>{
 
 // ******* /users/:id *********************************
 app.put('/users/:id', (req, res) => {
-  const {firstName, lastName, position} = req.body;
+  const {firstname, lastname, position} = req.body;
   
   // validation of received data
-  if(firstName && lastName && position) {
-    if(firstName.length < 2) return res.status(400).json("invalid first name");
-    if(lastName.length < 2) return res.status(400).json("invalid last name");
+  if(firstname && lastname && position) {
+    if(firstname.length < 2) return res.status(400).json("invalid first name");
+    if(lastname.length < 2) return res.status(400).json("invalid last name");
     if(position.length < 2) return res.status(400).json("invalid position");
     // all data is good, check the existence of such user
     if(req.params.id) {
@@ -280,8 +280,8 @@ app.put('/users/:id', (req, res) => {
           db('users')
           .where({id: req.params.id})
           .update({
-            firstname: firstName,
-            lastname: lastName,
+            firstname: firstname,
+            lastname: lastname,
             position: position
           })
           .then(() => res.status(200).json('success, user\'s data updated'))
